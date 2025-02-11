@@ -37,7 +37,7 @@ export default function ThemeToggler() {
 
   return (
     <div className="flex items-center gap-2 transition-colors text-white">
-      <span className="text-sm font-medium">Theme</span>
+      <span className="text-md font-bold">Theme</span>
       <button
         onClick={toggleTheme}
         className={`
