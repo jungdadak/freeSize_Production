@@ -3,11 +3,14 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import FileUpload from '../FileUpload/FileUpload';
+import FilePreview from '../FileUpload/FilePreview';
+import { useAppSelector } from '@/lib/redux/hooks';
 
 export default function TestPannel() {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
-
+  const file = useAppSelector((state) => state.file.file);
   useEffect(() => {
     // 마운트 후 애니메이션을 위해 상태를 변경
     setIsVisible(true);
@@ -26,7 +29,7 @@ export default function TestPannel() {
   return (
     <div
       className={`fixed right-8 top-32 bottom-12 
-      w-[calc(50%-2rem)] 
+      w-[calc(50% - 2rem)]
       rounded-2xl 
       bg-white/90 dark:bg-black
       border-2 border-orange-400/50 dark:border-orange-500/50
@@ -64,47 +67,11 @@ export default function TestPannel() {
           </p>
         </div>
 
-        {/* 메인 콘텐츠 영역 - 마진 추가 */}
-        <div className="flex-1 space-y-6 mb-8">
-          {/* 섹션 1 */}
-          <div
-            className="p-6 rounded-xl 
-            bg-gradient-to-br from-orange-50 to-yellow-50 
-            dark:from-orange-900/20 dark:to-yellow-900/20 
-            border-2 border-orange-200 dark:border-orange-800/30
-            mx-4"
-          >
-            <h3 className="text-xl font-semibold text-orange-700 dark:text-orange-300 mb-3">
-              Upload Images
-            </h3>
-            <p className="text-gray-700 dark:text-gray-300">
-              Drag and drop your images here or click to browse
-            </p>
-          </div>
-
-          {/* 섹션 2 */}
-          <div
-            className="p-6 rounded-xl 
-            bg-gradient-to-br from-yellow-50 to-orange-50 
-            dark:from-yellow-900/20 dark:to-orange-900/20 
-            border-2 border-yellow-200 dark:border-yellow-800/30
-            mx-4"
-          >
-            <h3 className="text-xl font-semibold text-yellow-700 dark:text-yellow-300 mb-3">
-              Enhancement Options
-            </h3>
-            <p className="text-gray-700 dark:text-gray-300">
-              Choose from various enhancement options to perfect your images
-            </p>
-          </div>
-        </div>
-
-        {/* 하단 정보 - 패딩과 마진 추가 */}
-        <div className="mt-auto pt-6 px-4 border-t-2 border-orange-200 dark:border-orange-800/50">
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-            All processing is done locally on your device. Your images are never
-            uploaded to any server.
-          </p>
+        <div className="max-w-xl mx-auto p-8">
+          <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
+            이미지를 끌어오거나 추가
+          </h1>
+          {file ? <FilePreview /> : <FileUpload />} {/* ✅ 중복 렌더링 방지 */}
         </div>
       </div>
     </div>
