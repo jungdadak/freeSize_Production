@@ -49,7 +49,7 @@ export default function Hero({ children, alignment = 'start' }: HeroProps) {
   return (
     <div
       ref={sectionRef}
-      className={`min-h-screen w-full flex flex-col items-${alignment} justify-start transition-opacity pt-16 duration-300`}
+      className={`min-h-screen w-full flex flex-col items-${alignment} justify-start transition-opacity duration-300`}
       style={{ opacity }}
     >
       {children}

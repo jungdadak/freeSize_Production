@@ -26,10 +26,10 @@ const ProcessSection = () => {
   ];
 
   return (
-    <section className="w-full p-8 relative sm:mt-40">
+    <section className="w-full p-8 relative sm:mt-20 max-w-6xl">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm -z-10" />
 
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto">
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-16">
           How It Works
         </h2>

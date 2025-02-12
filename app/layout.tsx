@@ -37,7 +37,7 @@ export default async function RootLayout({
       >
         <Navbar />
 
-        <main className="min-h-screen">{children}</main>
+        <main className="min-h-screen pt-16">{children}</main>
       </body>
     </html>
   );

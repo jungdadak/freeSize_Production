@@ -31,12 +31,12 @@ export default function Getstarted({ targetId }: GetstartedProps) {
   return (
     <div
       onClick={scrollToTarget}
-      className="mt-12 cursor-pointer flex flex-col items-center group"
+      className="mt-20 cursor-pointer flex flex-col items-center group"
     >
-      <span className="text-orange-400 dark:text-orange-400 font-bold text-3xl md:text-5xl hover:text-orange-500 dark:hover:text-yellow-400 transition-colors duration-300">
-        Get Started
+      <span className="text-orange-400 dark:text-orange-400 font-bold text-2xl md:text-4xl hover:text-orange-500 dark:hover:text-yellow-400 transition-colors duration-300">
+        Scroll
       </span>
-      <ChevronsDown className="mt-5 w-12 h-12 text-orange-400 dark:text-orange-400 animate-bounce group-hover:text-orange-500 dark:group-hover:text-yellow-400" />
+      <ChevronsDown className=" w-12 h-12 text-orange-400 dark:text-orange-400 animate-bounce group-hover:text-orange-500 dark:group-hover:text-yellow-400" />
     </div>
   );
 }
