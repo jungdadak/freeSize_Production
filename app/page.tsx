@@ -18,8 +18,8 @@ export default function HomePage() {
         sizes="100vw"
       />
       {/* Hero 섹션 */}
-      <Hero>
-        <main className="mt-24 md:ml-10 p-8 relative">
+      <Hero alignment="start">
+        <main className="mt-24 md:ml-10 p-8 relativ max-w-3xl ">
           <div className="absolute inset-0 bg-black/40 blur-xl rounded-xl -z-10" />
 
           <div className="flex items-center gap-2 mb-4 md:mb-6">
@@ -67,7 +67,7 @@ export default function HomePage() {
         </main>
       </Hero>
 
-      <Hero alignment="start">
+      <Hero alignment="center">
         <ProcessSection />
       </Hero>
       {/* 추가 콘텐츠 – 스크롤이 가능한 충분한 높이 제공 */}
