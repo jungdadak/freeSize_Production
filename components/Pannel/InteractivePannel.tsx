@@ -7,10 +7,18 @@ import FileUpload from '../FileUpload/FileUpload';
 import FilePreview from '../FileUpload/FilePreview';
 import { useAppSelector } from '@/lib/redux/hooks';
 
+/**
+ * 메인페이지 우측에 조건부로 랜더링 되는 테스트 패널 컴포넌트 입니다.
+ * components/Btn/FileUpload 의 FilePreview, FileUpload를 조건부로 랜더링 합니다.
+ */
 export default function TestPannel() {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
+
+  // 리덕스 스토어에서 파일 데이터를 가져옵니다.
   const file = useAppSelector((state) => state.file.file);
+
+  //---------------------<애니메이션 관련 로직 : 쿼리 파라미터를 사용합니다.>--------
   useEffect(() => {
     // 마운트 후 애니메이션을 위해 상태를 변경
     setIsVisible(true);
@@ -54,20 +62,18 @@ export default function TestPannel() {
         </button>
 
         {/* 헤더 영역 */}
-        <div className="mb-8 border-b-2 border-orange-200 dark:border-orange-800/50 pb-6">
+        <div className=" border-b-2 border-orange-200 dark:border-orange-800/50 ">
           <div className="flex items-center gap-3 mb-2">
             <span className="bg-orange-500 w-2 h-2 rounded-full"></span>
             <h2 className="text-2xl font-bold text-gray-800 dark:text-orange-200">
               Test Your Image
             </h2>
           </div>
-          <p className="text-gray-600 dark:text-gray-300 pt-3">
-            이미지를 업로드하고 옵션을 선택하세요
-          </p>
         </div>
 
+        {/* --------- 이미지 업로드 상태(Redux fileSlice) 에서 파일 존재 유무에 따라 파일 미리보기나 업로드 상태랜더링합니다. */}
         <div className="flex-1 flex items-center justify-center">
-          <div className="w-full max-w-xl mx-auto p-8">
+          <div className="w-full max-w-xl mx-auto px-8 pt-3">
             {file ? <FilePreview /> : <FileUpload />}
           </div>
         </div>
