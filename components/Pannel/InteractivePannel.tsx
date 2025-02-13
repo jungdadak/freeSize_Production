@@ -28,8 +28,7 @@ export default function TestPannel() {
 
   return (
     <div
-      className={`fixed right-8 top-32 bottom-12 
-      w-[calc(50% - 2rem)]
+      className={`w-full h-full
       rounded-2xl 
       bg-white/90 dark:bg-black
       border-2 border-orange-400/50 dark:border-orange-500/50
@@ -59,19 +58,18 @@ export default function TestPannel() {
           <div className="flex items-center gap-3 mb-2">
             <span className="bg-orange-500 w-2 h-2 rounded-full"></span>
             <h2 className="text-2xl font-bold text-gray-800 dark:text-orange-200">
-              Image Enhancement
+              Test Your Image
             </h2>
           </div>
-          <p className="text-gray-600 dark:text-gray-300 ml-5">
-            Transform your images with our AI-powered tools
+          <p className="text-gray-600 dark:text-gray-300 pt-3">
+            이미지를 업로드하고 옵션을 선택하세요
           </p>
         </div>
 
-        <div className="max-w-xl mx-auto p-8">
-          <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
-            이미지를 끌어오거나 추가
-          </h1>
-          {file ? <FilePreview /> : <FileUpload />} {/* ✅ 중복 렌더링 방지 */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full max-w-xl mx-auto p-8">
+            {file ? <FilePreview /> : <FileUpload />}
+          </div>
         </div>
       </div>
     </div>
