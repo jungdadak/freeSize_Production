@@ -35,7 +35,7 @@ export default async function HomePage({ searchParams }: PageProps) {
       <Hero alignment="start">
         <main className="w-full min-h-screen flex flex-col md:flex-row">
           {/* 왼쪽 텍스트 섹션 */}
-          <div className="w-full md:w-1/2 p-8 md:p-8 flex flex-col items-center justify-center">
+          <div className="w-full md:w-1/2 p-8 md:p-8 flex flex-col items-center justify-center shrink-0">
             {/* AI-Powered 배지 */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 mb-8">
               <Sparkles className="w-5 h-5 text-orange-400" />
@@ -96,8 +96,10 @@ export default async function HomePage({ searchParams }: PageProps) {
           </div>
 
           {/* 오른쪽 패널 섹션 */}
-          <div className="w-full md:w-1/2 relative">
-            {showPanel && <TestPannel />}
+          <div className="w-full md:w-1/2 h-screen sticky top-0 overflow-y-auto flex items-center justify-center p-4">
+            <div className="w-full max-w-3xl mx-auto">
+              {showPanel && <TestPannel />}
+            </div>
           </div>
         </main>
       </Hero>
