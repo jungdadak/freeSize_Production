@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  PackageOpen,
-  RocketIcon,
-  BookOpen,
-  Activity,
-  Menu,
-  X,
-} from 'lucide-react';
+import { Home, RocketIcon, BookOpen, Activity, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import DarkModeToggler from './DarkModeToggler';
 import Logo from './Logo';
@@ -20,9 +13,9 @@ const navItems = [
     icon: <RocketIcon className="w-5 h-5" />,
   },
   {
-    href: '/imageBox',
-    label: 'Image Box',
-    icon: <PackageOpen className="w-5 h-5" />,
+    href: '/',
+    label: 'Home',
+    icon: <Home className="w-5 h-5" />,
   },
   {
     href: '/docs',
