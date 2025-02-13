@@ -36,6 +36,7 @@ export default function TestPannel() {
 
   return (
     <div
+      id="test"
       className={`w-full h-full
       rounded-2xl 
       bg-white/90 dark:bg-black
@@ -72,8 +73,8 @@ export default function TestPannel() {
         </div>
 
         {/* --------- 이미지 업로드 상태(Redux fileSlice) 에서 파일 존재 유무에 따라 파일 미리보기나 업로드 상태랜더링합니다. */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="w-full max-w-xl mx-auto px-8 pt-3">
+        <div className="flex items-center justify-between">
+          <div className="w-full pt-3">
             {file ? <FilePreview /> : <FileUpload />}
           </div>
         </div>
