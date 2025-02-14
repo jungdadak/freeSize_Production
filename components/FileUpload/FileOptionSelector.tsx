@@ -9,6 +9,7 @@ import type {
   UncropOption,
   SquareOption,
 } from '@/store/fileSlice';
+import { FileOptionResult } from '@/utils/calculateDimension';
 
 type FileMethod =
   | UpscaleOption['method']
@@ -25,27 +26,13 @@ const optionsMap: Record<FileMethod, FileOption[]> = {
   square: ['768', '1024', '1536'],
 };
 
-// 옵션별 설명 텍스트
-const optionDescriptions: Record<FileMethod, Record<string, string>> = {
-  upscale: {
-    x1: '원본 크기로 유지',
-    x2: '원본 크기의 2배로 확대',
-    x4: '원본 크기의 4배로 확대',
-  },
-  uncrop: {
-    '1:2': '세로로 긴 형태로 확장',
-    '2:1': '가로로 긴 형태로 확장',
-  },
-  square: {
-    '768': '768x768 크기로 변환',
-    '1024': '1024x1024 크기로 변환',
-    '1536': '1536x1536 크기로 변환',
-  },
-};
-
 export default function FileOptionSelector() {
   const dispatch = useAppDispatch();
   const selectedOption = useAppSelector((state) => state.file.file?.option);
+  const [width, height] = useAppSelector((state) => [
+    state.file.file?.width,
+    state.file.file?.height,
+  ]);
   const [method, setMethod] = useState<FileMethod>('upscale');
   const options = optionsMap[method];
 
@@ -102,14 +89,18 @@ export default function FileOptionSelector() {
           </label>
         ))}
       </div>
-      {/* Description Text */}
-      {selectedOption && (
-        <div className="text-sm text-gray-600 dark:text-gray-400 mb-4 mt-auto">
-          {optionDescriptions[selectedOption.method][selectedOption.options]}
-        </div>
-      )}
+
       {/* Bottom Section - Confirm Button */}
       <div className="mt-auto">
+        {/* Description Text */}
+        {selectedOption && (
+          <FileOptionResult
+            method={selectedOption.method}
+            selectedOption={selectedOption.options}
+            width={width}
+            height={height}
+          />
+        )}
         <Button
           className="bg-orange-500 dark:bg-yellow-500 hover:bg-yellow-600 hover:dark:bg-orange-600 dark:text-white font-black text-black w-full py-2 rounded-lg font-semibold rounded-xl"
           onClick={() =>
