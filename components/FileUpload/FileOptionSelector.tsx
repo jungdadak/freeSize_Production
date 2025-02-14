@@ -70,7 +70,7 @@ export default function FileOptionSelector() {
 
       // API 요청
       const uploadResponse = await fetch(
-        `/api/${submitData.method}?taskId=${taskId}&${optionParam}=${submitData.options}`,
+        `/api/testone/${submitData.method}?taskId=${taskId}&${optionParam}=${submitData.options}`,
         {
           method: 'POST',
           body: formData,
