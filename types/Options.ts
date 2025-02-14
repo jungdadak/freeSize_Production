@@ -1,5 +1,14 @@
-export type FileMethod = 'upscale' | 'uncrop' | 'square';
-export type FileOption = string;
+import { SquareOption, UncropOption, UpscaleOption } from '@/store/fileSlice';
+
+export type FileMethod =
+  | UpscaleOption['method']
+  | UncropOption['method']
+  | SquareOption['method'];
+
+export type FileOption =
+  | UpscaleOption['options']
+  | UncropOption['options']
+  | SquareOption['options'];
 
 export const optionsMap: Record<FileMethod, FileOption[]> = {
   upscale: ['x1', 'x2', 'x4'],
