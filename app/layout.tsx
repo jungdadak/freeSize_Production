@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from '@/components/Nav/NavBar';
 import { cookies } from 'next/headers';
 import ReduxProvider from '@/lib/redux/ReduxProvider';
+import TanstackProviders from '@/utils/TanstackProviders';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,7 +39,9 @@ export default async function RootLayout({
       >
         <Navbar />
         <ReduxProvider>
-          <main className="min-h-screen pt-16">{children}</main>
+          <TanstackProviders>
+            <main className="min-h-screen pt-16">{children}</main>
+          </TanstackProviders>
         </ReduxProvider>
       </body>
     </html>
