@@ -27,6 +27,7 @@ export interface FileType {
   width: number;
   height: number;
   option?: UpscaleOption | UncropOption | SquareOption;
+  taskId?: string;
 }
 
 interface FileState {
@@ -59,6 +60,11 @@ export const fileSlice = createSlice({
     },
     clearFile: (state) => {
       state.file = null;
+    },
+    setFileTaskId: (state, action: PayloadAction<string>) => {
+      if (state.file) {
+        state.file.taskId = action.payload;
+      }
     },
   },
 });
