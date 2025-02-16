@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { clearFile, setFileOption, setFileTaskId } from '@/store/fileSlice';
+import { clearFile, setFileOption } from '@/store/fileSlice';
 import { Button } from '@/components/ui/button';
 import type {
   UpscaleOption,
@@ -14,6 +14,7 @@ import { FileMethod, FileOption, optionsMap } from '@/types/Options';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { addTask, clearTasks, updateTaskStage } from '@/store/processSlice';
+import { initializeFileProcess } from '@/store/thunk/initializeFileProcess.thunk';
 
 export default function FileOptionSelector() {
   //------<타입 지정한 커스텀 리덕스훅 가져오기>----------------
@@ -86,17 +87,8 @@ export default function FileOptionSelector() {
     },
     // 요청 시작 전에 실행: 'health' 단계로 상태 업데이트
     onMutate: async (variables) => {
-      await dispatch(
-        //taskId를 file, process 슬라이스에 각각 등록
-        setFileTaskId(variables.taskId)
-      );
-      await dispatch(addTask({ taskId: variables.taskId }));
-      await dispatch(
-        updateTaskStage({
-          taskId: variables.taskId,
-          stage: 'health',
-        })
-      );
+      //리덕스 미들웨어로 넘겨야 해서 dispatch를 또 써야 한다고 한다. 그렇데.
+      await dispatch(initializeFileProcess(submitData.id!, variables.taskId));
     },
 
     // 요청 성공 시 실행: 'healthGood' 단계로 상태 업데이트
