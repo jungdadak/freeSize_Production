@@ -31,6 +31,14 @@ export async function POST(request: NextRequest) {
       method: searchParams.get('method'),
       options: searchParams.get('options'),
     });
+    //--------------------<Test Code>--------------------------
+    if (process.env.NODE_ENV === 'development') {
+      return NextResponse.json({
+        code: 200,
+        message: 'wait',
+        url: process.env.MOCK_HEALTH_SUCCESS_RESPONSE,
+      });
+    }
 
     const backendFormData = new FormData();
     backendFormData.append('file', file);
@@ -39,7 +47,7 @@ export async function POST(request: NextRequest) {
     const optionParam = optionParamMap[validatedData.method];
 
     const response = await fetch(
-      `${process.env.BACKEND_URL}/${validatedData.method}?taskId=${validatedData.taskId}&${optionParam}=${validatedData.options}`,
+      `${process.env.SPRING_BACKEND_URL}/${validatedData.method}?taskId=${validatedData.taskId}&${optionParam}=${validatedData.options}`,
       {
         method: 'POST',
         body: backendFormData,
