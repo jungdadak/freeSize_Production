@@ -6,6 +6,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
  */
 
 export interface ProcessInfo {
+  fileId: string; // fileSlice의 fileid를 FK로 참조
   stage:
     | 'notStarted'
     | 'health'
@@ -28,11 +29,17 @@ export const processSlice = createSlice({
   name: 'process',
   initialState,
   reducers: {
-    // 태스크 추가: 새로운 태스크를 'notStarted' 단계로 추가
-    addTask: (state, action: PayloadAction<{ taskId: string }>) => {
-      const { taskId } = action.payload;
+    // 태스크 추가: 새로운 태스크를 'notStarted' 단계로 추가, fileId를 추가
+    addTask: (
+      state,
+      action: PayloadAction<{ taskId: string; fileId: string }>
+    ) => {
+      const { taskId, fileId } = action.payload;
       if (!state[taskId]) {
-        state[taskId] = { stage: 'notStarted' };
+        state[taskId] = {
+          fileId,
+          stage: 'notStarted',
+        };
       }
     },
     // 태스크의 단계 업데이트: 특정 태스크의 stage를 변경

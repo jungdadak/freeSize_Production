@@ -7,6 +7,7 @@ import { FolderSync } from 'lucide-react';
 import { formatFileSize } from '@/utils/fileSizeConverter';
 import FileOptionSelector from './FileOptionSelector';
 import ProcessStatus from '../FileProcess/ProcessStatus';
+import { useFileProcessRef } from '@/hooks/useFileProcessRef';
 
 /**
  * 인터랙티브 패널에 랜더링되는 컴포넌트
@@ -18,9 +19,9 @@ const FilePreview = () => {
   const file = useAppSelector((state) => state.file.file);
   const dispatch = useAppDispatch();
 
-  const taskId = file?.taskId ?? null;
-  const isProcessing = !!taskId; // taskId가 있으면 true, 없으면 false
+  const currentProcess = useFileProcessRef(file?.id);
 
+  const isProcessing = !!currentProcess;
   // 파일이 없으면 업로드 UI 표시
   if (!file) return <FileUpload />;
   // 정의한 유틸함수로 파일사이즈를 읽기좋게 만들어줍니다. (mb, kb, b, gb)
@@ -42,7 +43,7 @@ const FilePreview = () => {
             </button>
           )}
 
-          {/* 🔹 taskId가 있으면 animate-pulse 추가 */}
+          {/* taskId가 있으면 animate-pulse 추가 */}
           <img
             src={file.url}
             alt={file.name}
@@ -50,7 +51,7 @@ const FilePreview = () => {
               ${isProcessing ? 'animate-pulse brightness-50' : ''}`}
           />
 
-          {/* 🔹 taskId가 없을 때만 정보 표시 */}
+          {/* 처리중이 아니면 이미지 세부정보 표현함 */}
           {!isProcessing && (
             <>
               <p className="absolute bottom-2 left-2 text-sm bg-yellow-500 bg-opacity-80 px-2 py-1 rounded-full text-white dark:bg-yellow-600">
@@ -64,7 +65,7 @@ const FilePreview = () => {
         </div>
       </div>
 
-      {/* 🔹 taskId가 있으면 처리 UI, 없으면 옵션 선택 UI */}
+      {/* 처리중이 아니면 처리를 위한 옵션셀렉터 랜더링, 처리중이면 스테이터스 표시 ui 랜더링 */}
       <div className="flex-none w-[270px]">
         {isProcessing ? <ProcessStatus /> : <FileOptionSelector />}
       </div>

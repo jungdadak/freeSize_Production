@@ -1,4 +1,5 @@
 'use client';
+import { useFileProcessRef } from '@/hooks/useFileProcessRef';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { clearFile } from '@/store/fileSlice';
 import { clearTasks } from '@/store/processSlice';
@@ -11,12 +12,18 @@ import { Check, Activity, Wifi, XCircle } from 'lucide-react';
  */
 const ProcessStatus = () => {
   const dispatch = useAppDispatch();
-  const taskId = useAppSelector((state) => state.file.file?.taskId);
-  if (!taskId) {
-    dispatch(clearFile(), clearTasks());
+  const file = useAppSelector((state) => state.file.file);
+
+  const currentProcess = useFileProcessRef(file?.id);
+
+  // 없으면 얘가 랜더링된게 잘못이니 스토어들 그냥 클리어함
+  if (!currentProcess) {
+    dispatch(clearFile());
+    dispatch(clearTasks());
     return;
   }
-  const currentStep = useAppSelector((state) => state.process[taskId].stage);
+
+  const currentStep = currentProcess.stage;
 
   // 헬스체크 상태
   const isHealthActive = currentStep === 'health';

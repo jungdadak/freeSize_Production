@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { clearFile, setFileOption } from '@/store/fileSlice';
+import { clearFile, setFileOption, setFileTaskId } from '@/store/fileSlice';
 import { Button } from '@/components/ui/button';
 import type {
   UpscaleOption,
@@ -85,11 +85,13 @@ export default function FileOptionSelector() {
       return response.json();
     },
     // 요청 시작 전에 실행: 'health' 단계로 상태 업데이트
-    onMutate: (variables) => {
-      dispatch(
+    onMutate: async (variables) => {
+      await dispatch(
         //taskId를 file, process 슬라이스에 각각 등록
-        setFileTaskId(variables.taskId),
-        addTask({ taskId: variables.taskId }),
+        setFileTaskId(variables.taskId)
+      );
+      await dispatch(addTask({ taskId: variables.taskId }));
+      await dispatch(
         updateTaskStage({
           taskId: variables.taskId,
           stage: 'health',
@@ -244,7 +246,4 @@ export default function FileOptionSelector() {
       </div>
     </div>
   );
-}
-function setFileTaskId(taskId: string): any {
-  throw new Error('Function not implemented.');
 }
