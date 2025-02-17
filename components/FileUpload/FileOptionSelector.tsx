@@ -1,4 +1,3 @@
-// components/FileOptionSelector.tsx
 'use client';
 
 import { useState } from 'react';
@@ -57,7 +56,7 @@ export default function FileOptionSelector() {
     );
   };
 
-  // 파일 처리 커스텀 훅 사용
+  // 파일 처리 커스텀 훅 사용 -> TanstackQuery + redux Update
   const { processFile, isProcessing } = useFileProcessing(submitData.id);
 
   /**----------------------------<시작 버튼 핸들러>-----------------------------

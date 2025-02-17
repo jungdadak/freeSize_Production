@@ -21,7 +21,7 @@ export const sanitizeFileName = (filename: string): string => {
   // slugify로 특수문자 처리 (언더바를 하이픈으로 변환)
   return slugify(nameWithoutExt, {
     lower: true, // 소문자로 변환
-    strict: true, // 특수문자 제거
     trim: true, // 앞뒤 공백 제거
+    remove: /[!@#$%^&*()_+=[\]{};':"\\|,.<>/?]+/g,
   });
 };

@@ -1,7 +1,7 @@
 // hooks/useFileProcessing.ts
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { updateTaskStage } from '@/store/processSlice';
 import { initializeFileProcess } from '@/store/thunk/initializeFileProcess.thunk';
@@ -14,6 +14,12 @@ import { FileMethod } from '@/types/Options';
 export function useFileProcessing(submitDataId: string | undefined) {
   const dispatch = useAppDispatch();
 
+  /**
+   * 헬스체크시 testone 엔드포인트에 요청하는 mutation
+   * taskId, method, options 는 쿼리파라미터로 담아서 전송
+   * body 에 파일 바이너리 데이터 전송
+   * notStarted->Polling 까지 상태변화 유발
+   */
   const healthCheckMutation = useMutation({
     mutationFn: async (params: {
       formData: FormData;
@@ -26,16 +32,19 @@ export function useFileProcessing(submitDataId: string | undefined) {
       url.searchParams.append('method', params.method);
       url.searchParams.append('options', params.options);
 
+      // 응답 홀딩
       const response = await fetch(url, {
         method: 'POST',
         body: params.formData,
       });
 
+      //에러 핸들링
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Health check failed');
+        throw new Error(errorData.error || 'failed healthCheck');
       }
 
+      // 성공시 응답값 반환 (code 값만 반환받음.)
       return response.json();
     },
     // 요청 시작 전에 실행: 'health' 단계로 상태 업데이트
