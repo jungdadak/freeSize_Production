@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { apiRequestSchema } from '@/schemas/nextApiUpload.schema';
 import { z } from 'zod';
 import { FileMethod } from '@/types/Options';
+import redis from '@/lib/redis/redis';
+
+interface SpringResponse {
+  code: string;
+  url?: string;
+  message: string;
+}
 
 // 메소드별 옵션 파라미터 이름 매핑
 const optionParamMap: Record<FileMethod, string> = {
@@ -36,21 +43,29 @@ export async function POST(request: NextRequest) {
       method: searchParams.get('method'),
       options: searchParams.get('options'),
     });
-    //--------------------<Test Code>--------------------------
+    //--------------------<Test Code 개발 환경에서 임시 s3주소를 내려주고 레디스에 등록한후 응답합니다.>--------------------------
     if (process.env.NODE_ENV === 'development') {
-      return NextResponse.json({
+      const mockResult = {
         code: 200,
         message: 'wait',
         url: process.env.MOCK_HEALTH_SUCCESS_RESPONSE,
-      });
+      };
+      if (mockResult.url) {
+        await redis.set(validatedData.taskId, mockResult.url, 'EX', 60 * 5);
+        console.log('레디스 등록됨 :', validatedData.taskId, mockResult.url);
+      }
+
+      return NextResponse.json(mockResult);
     }
 
+    //---------------<실제 spring 통신부분>---------------
     const backendFormData = new FormData();
     backendFormData.append('file', file);
 
     // 메소드에 따른 옵션 파라미터 이름 사용
     const optionParam = optionParamMap[validatedData.method];
 
+    // swagger 스펙에 맞춘 경로로 파일 전송
     const response = await fetch(
       `${process.env.SPRING_BACKEND_URL}/${validatedData.method}?taskId=${validatedData.taskId}&${optionParam}=${validatedData.options}`,
       {
@@ -63,8 +78,13 @@ export async function POST(request: NextRequest) {
       throw new Error('Backend request failed');
     }
 
-    const result = await response.json();
-    return NextResponse.json(result);
+    const result: SpringResponse = await response.json();
+    if (validatedData.taskId && result.url) {
+      await redis.set(validatedData.taskId, result.url, 'EX', 60 * 5);
+      console.log('레디스 등록됨 :', validatedData.taskId, result.url);
+    }
+
+    return NextResponse.json(result.code);
   } catch (error) {
     //zod에러 발생은 클라이언트쪽에서 무언가 이상행동을 했을 가능성이 높아 400처리
     if (error instanceof z.ZodError) {

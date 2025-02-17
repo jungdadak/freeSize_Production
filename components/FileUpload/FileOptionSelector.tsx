@@ -13,7 +13,7 @@ import { FileOptionResult } from '@/utils/calculateDimension';
 import { FileMethod, FileOption, optionsMap } from '@/types/Options';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { addTask, clearTasks, updateTaskStage } from '@/store/processSlice';
+import { clearTasks, updateTaskStage } from '@/store/processSlice';
 import { initializeFileProcess } from '@/store/thunk/initializeFileProcess.thunk';
 
 export default function FileOptionSelector() {
@@ -149,9 +149,14 @@ export default function FileOptionSelector() {
         taskId,
         options: submitData.options,
       });
-
+      // mutateAsync 성공했다면, 헬스체크 성공이므로 폴링으로 단계 변경
       if (result.code === 200) {
-        //TODO : 처리 성공 시 필요한 로직
+        dispatch(
+          updateTaskStage({
+            taskId: taskId,
+            stage: 'polling',
+          })
+        );
       }
     } catch (error) {
       alert('SERVER ERROR : 죄송합니다 다시 시도해 주세요');
