@@ -1,4 +1,3 @@
-// app/page.tsx (서버 컴포넌트)
 import Scroll from '@/components/Btn/Scroll';
 import Hero from '@/components/HeroSection/Hero';
 import Image from 'next/image';
