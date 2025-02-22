@@ -11,6 +11,7 @@ import { useFileProcessRef } from '@/hooks/useFileProcessRef';
 
 /**
  * 인터랙티브 패널에 랜더링되는 컴포넌트
+ * 우측에는 이미지 영역이, 좌측에는 옵션셀렉터나 처리상태 ui가 랜더링되는 구조
  * 파일이 있을 경우 랜더링되고, 파일이 없는 경우 FileUpload 컴포넌트 랜더링
  * 처리 시작시 유저에게 인터랙티브 화면 제공
  */

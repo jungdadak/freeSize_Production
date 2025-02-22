@@ -11,10 +11,9 @@ import type {
 } from '@/store/fileSlice';
 import { FileOptionResult } from '@/utils/calculateDimension';
 import { FileMethod, FileOption, optionsMap } from '@/types/Options';
-import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { addTask, clearTasks, updateTaskStage } from '@/store/processSlice';
-import { initializeFileProcess } from '@/store/thunk/initializeFileProcess.thunk';
+import { clearTasks } from '@/store/processSlice';
+import { useFileProcessing } from '@/hooks/useFileProcessing';
 
 export default function FileOptionSelector() {
   //------<타입 지정한 커스텀 리덕스훅 가져오기>----------------
@@ -57,60 +56,8 @@ export default function FileOptionSelector() {
     );
   };
 
-  /**----------------------------<TanstackQuery 요청부분>-----------------------------
-   * Tanstack Query 뮤테이션 사용
-   * onMutate, onSuccess, onError시 리덕스 슬라이스 업데이트
-   */
-  const healthCheckMutation = useMutation({
-    mutationFn: async (params: {
-      formData: FormData;
-      method: FileMethod;
-      taskId: string;
-      options: string;
-    }) => {
-      const url = new URL('/api/testone', window.location.origin);
-      url.searchParams.append('taskId', params.taskId);
-      url.searchParams.append('method', params.method);
-      url.searchParams.append('options', params.options);
-
-      const response = await fetch(url, {
-        method: 'POST',
-        body: params.formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Health check failed');
-      }
-
-      return response.json();
-    },
-    // 요청 시작 전에 실행: 'health' 단계로 상태 업데이트
-    onMutate: async (variables) => {
-      //리덕스 미들웨어로 넘겨야 해서 dispatch를 또 써야 한다고 한다. 그렇데.
-      await dispatch(initializeFileProcess(submitData.id!, variables.taskId));
-    },
-
-    // 요청 성공 시 실행: 'healthGood' 단계로 상태 업데이트
-    onSuccess: (data, variables, context) => {
-      dispatch(
-        updateTaskStage({
-          taskId: variables.taskId,
-          stage: 'healthGood',
-        })
-      );
-    },
-
-    // 요청 실패 시 실행: 'healthBad' 단계로 상태 업데이트
-    onError: (error, variables, context) => {
-      dispatch(
-        updateTaskStage({
-          taskId: variables.taskId,
-          stage: 'healthBad',
-        })
-      );
-    },
-  });
+  // 파일 처리 커스텀 훅 사용 -> TanstackQuery + redux Update
+  const { processFile, isProcessing } = useFileProcessing(submitData.id);
 
   /**----------------------------<시작 버튼 핸들러>-----------------------------
    * 시작 버튼 클릭시 제출
@@ -142,17 +89,13 @@ export default function FileOptionSelector() {
       // 발사
       formData.append('file', blob, submitData.name);
 
-      // TanstackQuery 소환, fetch요청 시작, 리덕스 업데이트는 tanstack코드에서 진행합니다.
-      const result = await healthCheckMutation.mutateAsync({
+      // 파일 처리 시작, 리덕스 업데이트는 훅 내부에서 진행됩니다.
+      await processFile({
         formData,
         method: submitData.method,
         taskId,
         options: submitData.options,
       });
-
-      if (result.code === 200) {
-        //TODO : 처리 성공 시 필요한 로직
-      }
     } catch (error) {
       alert('SERVER ERROR : 죄송합니다 다시 시도해 주세요');
       URL.revokeObjectURL(submitData.originBlob); //블롭주소 해제
@@ -223,14 +166,10 @@ export default function FileOptionSelector() {
             <div className="mt-4">
               <Button
                 onClick={handleSubmit}
-                disabled={healthCheckMutation.isPending}
+                disabled={isProcessing}
                 className="w-full px-4 py-2 rounded-xl transition-all bg-orange-500 text-white dark:bg-yellow-500 dark:text-black hover:bg-orange-600 dark:hover:bg-yellow-600"
               >
-                {healthCheckMutation.isPending ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  '시 작'
-                )}
+                {isProcessing ? <Loader2 className="animate-spin" /> : '시 작'}
               </Button>
             </div>
           </>
