@@ -13,11 +13,17 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { taskId: string } }
 ) {
-  const { taskId } = params;
+  const { taskId } = await params;
+  console.log('📍 폴링 요청 받음:', taskId);
+
 
   const s3url = await redis.get(taskId);
+  console.log('🔎 Redis 조회 결과:', { taskId, s3url });
+
   //redis 5분 expire 설정이 동작한 것이므로 (-2)
   if (!s3url) {
+    console.log('⚠️ Redis에서 URL을 찾을 수 없음:', taskId);
+
     return NextResponse.json(
       {
         message: '시간이 너무 많이 흘렀습니다. 다시 시도해 주세요',
@@ -33,6 +39,8 @@ export async function GET(
     const s3Req = await fetch(s3url, {
       method: 'HEAD',
     });
+    console.log('🔍 S3 파일 체크:', s3Req.ok ? '존재' : '아직 없음');
+
     //file 존재하지 않을 경우 200처리  및 pending (polling 유지용)
     if (!s3Req.ok) {
       return NextResponse.json({ message: 'pending' }, { status: 200 });
