@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
             console.log('레디스 등록됨 :', validatedData.taskId, result.url);
         }
 
-        return NextResponse.json(result.code);
+        return NextResponse.json(result);
     } catch (error) {
         //zod에러 발생은 클라이언트쪽에서 무언가 이상행동을 했을 가능성이 높아 400처리
         if (error instanceof z.ZodError) {
