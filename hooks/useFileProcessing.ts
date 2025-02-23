@@ -157,6 +157,8 @@ export function useFileProcessing(submitDataId: string | undefined) {
             // 성공시 응답값 반환 (code 값만 반환받음.)
             const data = await response.json();
             console.log('mutationFn raw response:', data);  // 응답 데이터 확인
+            console.log('전체 응답 구조:', JSON.stringify(response, null, 2));
+            console.log('응답 타입:', typeof response);
             return data;
         },
         // 요청 시작 전에 실행: 'health' 단계로 상태 업데이트
