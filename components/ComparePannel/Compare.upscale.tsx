@@ -2,6 +2,7 @@
 import React, {CSSProperties, MouseEvent, useEffect, useRef, useState} from 'react';
 import Image from 'next/image';
 import {getImageDimensions} from '@/utils/getImageDimensionFromBlob';
+import {useRouter} from "next/navigation";
 
 interface CompareUpscaleProps {
     originUrl: string;
@@ -25,15 +26,16 @@ export default function CompareUpscale({
     const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
     const [processedDims, setProcessedDims] = useState<ImageDimensions | null>(null);
     const [showMagnifier, setShowMagnifier] = useState<boolean>(false);
+    const router = useRouter()
 
     // 처리된 이미지의 자연 크기를 가져옴
     useEffect(() => {
         if (resultUrl) {
             getImageDimensions(resultUrl)
                 .then((dims: ImageDimensions) => setProcessedDims(dims))
-                .catch(err => console.error('이미지 로드 실패:', err));
+                .catch(() => router.push('/notfound'));
         }
-    }, [resultUrl]);
+    }, [router, resultUrl]);
 
     const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
         const rect = containerRef.current?.getBoundingClientRect();
