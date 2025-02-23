@@ -155,7 +155,9 @@ export function useFileProcessing(submitDataId: string | undefined) {
             }
 
             // 성공시 응답값 반환 (code 값만 반환받음.)
-            return response.json();
+            const data = await response.json();
+            console.log('mutationFn raw response:', data);  // 응답 데이터 확인
+            return data;
         },
         // 요청 시작 전에 실행: 'health' 단계로 상태 업데이트
         onMutate: async (variables) => {
@@ -172,7 +174,12 @@ export function useFileProcessing(submitDataId: string | undefined) {
                 })
             );
             //요청성공 및 code ===200 수신시 polling으로 전환
+            console.log('healthGood 이후 data:', data);
+            console.log('code 타입:', typeof data.code);
+            console.log('code 값:', data.code);
             if (data.code === 200) {
+                console.log('polling 상태로 전환 시도');
+
                 console.log('code is 200, transitioning to polling')
                 dispatch(
                     updateTaskStage({
