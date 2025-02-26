@@ -6,7 +6,8 @@ import {notFound, useSearchParams} from "next/navigation";
 import UpscaleSummary from "@/app/testresult/upscale/UpscaleSummary";
 import {useEffect, useState} from "react";
 import {getImageDimensions} from "@/utils/getImageDimensionFromBlob";
-import {useAppSelector} from "@/lib/redux/hooks";
+import {useAppDispatch, useAppSelector} from "@/lib/redux/hooks";
+import {superClearAll} from "@/store/thunk/superClearAll.thunk";
 
 // 이미지 치수를 위한 인터페이스 정의
 interface ImageDimension {
@@ -15,6 +16,13 @@ interface ImageDimension {
 }
 
 export default function ResultPage() {
+    const dispatch = useAppDispatch()
+    useEffect(() => {
+        return () => {
+            // 페이지를 벗어날 때 Thunk 액션 디스패치
+            dispatch(superClearAll());
+        };
+    }, [dispatch]);
     const searchParams = useSearchParams();
     const originUrl = searchParams.get('originUrl');
     const resultUrl = searchParams.get('resultUrl');
