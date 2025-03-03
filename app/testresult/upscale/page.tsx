@@ -1,13 +1,13 @@
 'use client'
 import Image from 'next/image';
-import ResultTitle from "@/components/PageTitle/ResultTitle";
 import CompareUpscale from "@/components/ComparePannel/Compare.upscale";
 import {notFound, useSearchParams} from "next/navigation";
 import UpscaleSummary from "@/app/testresult/upscale/UpscaleSummary";
 import {useEffect, useState} from "react";
 import {getImageDimensions} from "@/utils/getImageDimensionFromBlob";
-import {useAppDispatch, useAppSelector} from "@/lib/redux/hooks";
-import {superClearAll} from "@/store/thunk/superClearAll.thunk";
+import {useAppSelector} from "@/lib/redux/hooks";
+import ResultTitle from "@/components/PageTitle/ResultTitle";
+import {Card, CardContent, CardHeader} from "@/components/ui/card";
 
 // 이미지 치수를 위한 인터페이스 정의
 interface ImageDimension {
@@ -16,13 +16,7 @@ interface ImageDimension {
 }
 
 export default function ResultPage() {
-    const dispatch = useAppDispatch()
-    useEffect(() => {
-        return () => {
-            // 페이지를 벗어날 때 Thunk 액션 디스패치
-            dispatch(superClearAll());
-        };
-    }, [dispatch]);
+
     const searchParams = useSearchParams();
     const originUrl = searchParams.get('originUrl');
     const resultUrl = searchParams.get('resultUrl');
@@ -88,21 +82,32 @@ export default function ResultPage() {
                 sizes="100vw"
             />
             <div className="max-w-7xl dark:bg-none mx-auto">
-                <ResultTitle>Upscale</ResultTitle>
+                <div className="flex flex-col md:flex-row md:space-x-4">
+                    {/* 좌측 이미지 렌더 영역 (메인 섹션) */}
+                    <div className="md:w-2/3 mb-4 md:mb-0">
+                        <Card className="h-full flex flex-col">
+                            <CardHeader className={`p-0`}>
+                                <ResultTitle>Upscale</ResultTitle>
+                            </CardHeader>
+                            <CardContent className="flex-grow flex items-center justify-center p-0 bg-neutral-800">
+                                <CompareUpscale
+                                    originUrl={originUrl}
+                                    resultUrl={resultUrl}
+                                    className={`w-full`}
+                                />
+                            </CardContent>
+                        </Card>
+                    </div>
 
-                <div className="flex justify-center gap-7">
-                    <CompareUpscale
-                        originUrl={originUrl}
-                        resultUrl={resultUrl}
-                        height={700}
-                        width={700}
-                    />
-                    <UpscaleSummary
-                        fileName={fileName}
-                        resultUrl={resultUrl}
-                        originDimension={formatDimension(dimensions.origin)}
-                        resultDimension={formatDimension(dimensions.result)}
-                    />
+                    {/* 우측 요약 및 다운로더 영역 */}
+                    <div className="md:w-1/3">
+                        <UpscaleSummary
+                            fileName={fileName}
+                            resultUrl={resultUrl}
+                            originDimension={formatDimension(dimensions.origin)}
+                            resultDimension={formatDimension(dimensions.result)}
+                        />
+                    </div>
                 </div>
             </div>
         </>

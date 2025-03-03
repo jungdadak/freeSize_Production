@@ -10,10 +10,11 @@ interface UpscaleSummaryProps {
 
 export default function UpscaleSummary({fileName, originDimension, resultDimension, resultUrl}: UpscaleSummaryProps) {
     return (<>
-        <Card className="w-[350px]">
+        <Card className="w-auto h-auto">
             <CardHeader>
                 <CardTitle>Process Summary</CardTitle>
                 <CardDescription>Congratulations !</CardDescription>
+
             </CardHeader>
             <CardContent>
                 <div className="grid w-full items-center gap-4">
