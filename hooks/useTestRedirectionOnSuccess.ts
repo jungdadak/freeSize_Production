@@ -2,7 +2,12 @@ import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import {useAppSelector} from '@/lib/redux/hooks';
 import {selectTaskIdByFileId} from '@/lib/redux/findTaskId';
+import {toast} from "sonner";
 
+/**
+ *  home page 에서 테스트 성공시 결과 페이지로 라우팅 해주는 훅
+ *  success 를 유저에게 확인하기 위해 2초간 기다린 후 이동
+ */
 export const useTestRedirectOnSuccess = () => {
     const router = useRouter();
     const file = useAppSelector((state) => state.file.file);
@@ -24,6 +29,8 @@ export const useTestRedirectOnSuccess = () => {
             method &&
             processInfo?.result
         ) {
+            toast.success(`완료되었습니다. 잠시후 결과 페이지로 리디렉션 합니다.`);
+
             const queryParams = new URLSearchParams({
                 originUrl: file.url,
                 resultUrl: processInfo.result,

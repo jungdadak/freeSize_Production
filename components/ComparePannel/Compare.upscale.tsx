@@ -4,6 +4,7 @@ import Image from 'next/image';
 import {getImageDimensions} from '@/utils/getImageDimensionFromBlob';
 import {useRouter} from "next/navigation";
 import {cn} from "@/lib/utils";
+import {toast} from "sonner";
 
 interface CompareUpscaleProps {
     originUrl: string;
@@ -36,8 +37,14 @@ export default function CompareUpscale({
     useEffect(() => {
         if (resultUrl) {
             getImageDimensions(resultUrl)
-                .then((dims: ImageDimensions) => setProcessedDims(dims))
-                .catch(() => router.push('/notfound'));
+                .then((dims: ImageDimensions) => {
+                    setProcessedDims(dims);
+                    toast.success("이미지 처리가 완료되었습니다.");  // 성공 메시지
+                })
+                .catch(() => {
+                    toast.error("이미지 처리 중 오류가 발생했습니다.");  // 오류 메시지
+                    router.push('/notfound');
+                });
         }
     }, [router, resultUrl]);
 
