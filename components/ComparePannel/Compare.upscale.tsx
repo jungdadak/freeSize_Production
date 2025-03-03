@@ -3,12 +3,15 @@ import React, {CSSProperties, MouseEvent, useEffect, useRef, useState} from 'rea
 import Image from 'next/image';
 import {getImageDimensions} from '@/utils/getImageDimensionFromBlob';
 import {useRouter} from "next/navigation";
+import {cn} from "@/lib/utils";
 
 interface CompareUpscaleProps {
     originUrl: string;
     resultUrl: string;
     width?: number;
     height?: number;
+    className?: string;
+
 }
 
 interface ImageDimensions {
@@ -21,6 +24,7 @@ export default function CompareUpscale({
                                            resultUrl,
                                            width = 500,
                                            height = 500,
+                                           className,
                                        }: CompareUpscaleProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
@@ -120,21 +124,19 @@ export default function CompareUpscale({
     return (
         <div
             ref={containerRef}
-            style={{position: 'relative', width, height, overflow: 'hidden'}}
+            className={cn("relative overflow-hidden", className)}
+            style={typeof width === 'number' && typeof height === 'number' ? {width, height} : undefined}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
         >
-            {/* 기본: 처리된 이미지 전체를 배경으로 표시 */}
             <Image src={resultUrl} alt="처리된 이미지" fill style={{objectFit: 'contain'}}/>
 
-            {/* 마우스가 있을 경우, 원본 이미지를 좌측에 오버레이하여 표시 */}
             {processedDims && mousePos && (
                 <div style={originalOverlayStyle}>
                     <Image src={originUrl} alt="원본 이미지" fill style={{objectFit: 'contain'}}/>
                 </div>
             )}
 
-            {/* 줌 렌즈: 좌측은 원본, 우측은 처리된 이미지 확대 */}
             {processedDims && mousePos && (
                 <div style={magnifierContainerStyle}>
                     <div
