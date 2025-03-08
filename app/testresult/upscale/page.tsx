@@ -15,7 +15,7 @@ interface ImageDimension {
     naturalHeight: number;
 }
 
-export default function ResultPage() {
+export default function UpscaleResultPage() {
 
     const searchParams = useSearchParams();
     const originUrl = searchParams.get('originUrl');
