@@ -46,7 +46,7 @@ const CompareUncrop = ({
         const originHeight = dimensions.origin.naturalHeight;
         const resultWidth = dimensions.result.naturalWidth;
         const resultHeight = dimensions.result.naturalHeight;
-        
+
 
         // 원본 대비 확장 비율
         const widthRatio = resultWidth / originWidth;
@@ -178,7 +178,7 @@ const CompareUncrop = ({
                         transform: 'translate(-50%, -50%)',
                         width: `${originalSize.width}px`,
                         height: `${originalSize.height}px`,
-                        border: '2px dashed yellow'
+                        border: '1px dashed blue'
                     }}/>
                 </div>
 

@@ -19,9 +19,17 @@ interface ImageDimension {
     naturalHeight: number;
 }
 
+interface CompareComponentProps {
+    originUrl: string;
+    resultUrl: string;
+    viewMode: string;
+    zoomLevel: number;
+    className?: string;
+}
+
 interface ImageResultPageProps {
-    title: string;  // 'Uncrop', 'Square' 등의 타이틀
-    CompareComponent?: React.ComponentType<any>;  // 기본값은 CompareUncrop
+    title: string;
+    CompareComponent?: React.ComponentType<CompareComponentProps>;
 }
 
 export default function ImageResultPage({
