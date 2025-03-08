@@ -5,6 +5,7 @@ import {getImageDimensions} from '@/utils/getImageDimensionFromBlob';
 import {useRouter} from "next/navigation";
 import {cn} from "@/lib/utils";
 import {toast} from "sonner";
+import {Maximize2, Minimize2, Search} from 'lucide-react';
 
 interface CompareUpscaleProps {
     originUrl: string;
@@ -31,14 +32,31 @@ export default function CompareUpscale({
     const [touchPoint, setTouchPoint] = useState<{ x: number; y: number } | null>(null);
     const [processedDims, setProcessedDims] = useState<ImageDimensions | null>(null);
     const [showMagnifier, setShowMagnifier] = useState<boolean>(false);
+    const [magnifierEnabled, setMagnifierEnabled] = useState<boolean>(true);
+    const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
     const [isTouchDevice, setIsTouchDevice] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const router = useRouter();
+
+    // 줌 렌즈 설정
+    const magnifierSize = 150;
+    const zoom = 3; // 확대 배율 증가
 
     // 디바이스 타입 감지
     useEffect(() => {
         setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
     }, []);
+
+    // 전체화면 변경 시 이미지 영역 계산을 위한 useEffect
+    useEffect(() => {
+        if (isFullscreen && processedDims) {
+            // 전체화면 모드에서 새로운 크기로 다시 계산하기 위해 약간의 지연 후 재렌더링 유도
+            const timer = setTimeout(() => {
+                setProcessedDims({...processedDims});
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [isFullscreen, processedDims]);
 
     // 처리된 이미지의 자연 크기를 가져옴
     useEffect(() => {
@@ -68,14 +86,14 @@ export default function CompareUpscale({
             if (elapsed > 16) {
                 previousTimeRef.current = time;
                 // 여기서 실제 위치 업데이트 로직 실행
-                if (containerRef.current && mousePos) {
+                if (containerRef.current && mousePos && magnifierEnabled) {
                     setShowMagnifier(true);
                 }
             }
         } else {
             previousTimeRef.current = time;
         }
-    }, [mousePos]);
+    }, [mousePos, magnifierEnabled]);
 
     useEffect(() => {
         const animate = (time: number) => {
@@ -94,13 +112,16 @@ export default function CompareUpscale({
     }, [animateMovement, touchPoint]);
 
     const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-        if (isTouchDevice) return; // 터치 디바이스에서는 마우스 이벤트 무시
+        if (isTouchDevice || !magnifierEnabled) return; // 터치 디바이스이거나 돋보기가 비활성화된 경우 무시
 
         const rect = containerRef.current?.getBoundingClientRect();
         if (!rect) return;
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
+
+        // 마우스 위치 설정
         setMousePos({x, y});
+        setTouchPoint({x, y});
     };
 
     const handleMouseLeave = () => {
@@ -110,6 +131,9 @@ export default function CompareUpscale({
 
     const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
         e.preventDefault(); // 기본 스크롤 동작 방지
+
+        if (!magnifierEnabled) return; // 돋보기가 비활성화된 경우 무시
+
         const touch = e.touches[0];
         const rect = containerRef.current?.getBoundingClientRect();
         if (!rect) return;
@@ -117,9 +141,8 @@ export default function CompareUpscale({
         const x = touch.clientX - rect.left;
         const y = touch.clientY - rect.top;
 
-        // 확대경 위치 조정 (터치 위치보다 위에 표시)
-        setMousePos({x, y: Math.max(y - 100, magnifierSize / 2)}); // 손가락 위 100px에 확대경 위치, 화면 밖으로 나가지 않도록 함
-        setTouchPoint({x, y}); // 실제 터치 위치 저장
+        setMousePos({x, y});
+        setTouchPoint({x, y});
         setShowMagnifier(true);
     };
 
@@ -133,11 +156,20 @@ export default function CompareUpscale({
     let displayedWidth = width, displayedHeight = height, offsetX = 0, offsetY = 0;
     if (processedDims) {
         const {naturalWidth, naturalHeight} = processedDims;
-        const scale = Math.min(width / naturalWidth, height / naturalHeight);
+
+        // 전체화면 모드일 때 컨테이너 크기 계산
+        const containerWidth = isFullscreen ?
+            (containerRef.current ? containerRef.current.clientWidth : window.innerWidth * 0.9) :
+            width;
+        const containerHeight = isFullscreen ?
+            (containerRef.current ? containerRef.current.clientHeight : window.innerHeight * 0.9) :
+            height;
+
+        const scale = Math.min(containerWidth / naturalWidth, containerHeight / naturalHeight);
         displayedWidth = naturalWidth * scale;
         displayedHeight = naturalHeight * scale;
-        offsetX = (width - displayedWidth) / 2;
-        offsetY = (height - displayedHeight) / 2;
+        offsetX = (containerWidth - displayedWidth) / 2;
+        offsetY = (containerHeight - displayedHeight) / 2;
     }
 
     // 마우스가 있을 경우, 표시된 이미지 내에서의 상대 x 좌표(클리핑 기준)
@@ -163,9 +195,19 @@ export default function CompareUpscale({
         originalOverlayStyle.clipPath = `polygon(${offsetX}px ${offsetY}px, ${offsetX + relativeDivider}px ${offsetY}px, ${offsetX + relativeDivider}px ${offsetY + displayedHeight}px, ${offsetX}px ${offsetY + displayedHeight}px)`;
     }
 
-    // 줌 렌즈 설정
-    const magnifierSize = 150;
-    const zoom = 2;
+    const toggleFullscreen = () => {
+        setIsFullscreen(!isFullscreen);
+    };
+
+    const toggleMagnifier = () => {
+        setMagnifierEnabled(!magnifierEnabled);
+        if (!magnifierEnabled) {
+            setShowMagnifier(false);
+            setMousePos(null);
+            setTouchPoint(null);
+        }
+    };
+
     const bgSizeX = displayedWidth * zoom;
     const bgSizeY = displayedHeight * zoom;
     let ratioX = 0, ratioY = 0, fullBgPosX = 0, bgPosY = 0;
@@ -198,133 +240,125 @@ export default function CompareUpscale({
 
     return (
         <div
-            ref={containerRef}
-            className={cn("relative overflow-hidden select-none", className)}
-            style={typeof width === 'number' && typeof height === 'number' ? {width, height} : undefined}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            aria-label="이미지 비교 시각화 도구"
-            role="application"
-        >
-            {isLoading ? (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                    <p>이미지 로딩 중...</p>
-                </div>
-            ) : (
-                <>
-                    <Image
-                        src={resultUrl}
-                        alt="처리된 이미지"
-                        fill
-                        style={{objectFit: 'contain'}}
-                        aria-hidden={showMagnifier}
-                    />
-
-                    {processedDims && mousePos && (
-                        <div
-                            style={originalOverlayStyle}
-                            aria-hidden="true"
-                        >
-                            <Image
-                                src={originUrl}
-                                alt="원본 이미지"
-                                fill
-                                style={{objectFit: 'contain'}}
-                            />
-                        </div>
-                    )}
-
-                    {processedDims && mousePos && showMagnifier && (
-                        <div style={magnifierContainerStyle} aria-label="확대 렌즈" role="img">
-                            <div
-                                style={{
-                                    position: 'absolute',
-                                    left: 0,
-                                    top: 0,
-                                    width: magnifierSize / 2,
-                                    height: magnifierSize,
-                                    backgroundImage: `url(${originUrl})`,
-                                    backgroundRepeat: 'no-repeat',
-                                    backgroundSize: `${bgSizeX}px ${bgSizeY}px`,
-                                    backgroundPosition: `${fullBgPosX}px ${bgPosY}px`,
-                                }}
-                                aria-hidden="true"
-                            />
-                            <div
-                                style={{
-                                    position: 'absolute',
-                                    left: magnifierSize / 2,
-                                    top: 0,
-                                    width: magnifierSize / 2,
-                                    height: magnifierSize,
-                                    backgroundImage: `url(${resultUrl})`,
-                                    backgroundRepeat: 'no-repeat',
-                                    backgroundSize: `${bgSizeX}px ${bgSizeY}px`,
-                                    backgroundPosition: `${fullBgPosX}px ${bgPosY}px`,
-                                }}
-                                aria-hidden="true"
-                            />
-                            <div
-                                style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: '50%',
-                                    width: 1,
-                                    height: '100%',
-                                    backgroundColor: 'rgba(255,255,255,0.5)',
-                                    zIndex: 1,
-                                }}
-                                aria-hidden="true"
-                            />
-                        </div>
-                    )}
-
-                    {touchPoint && mousePos && showMagnifier && (
-                        <svg
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
-                                pointerEvents: 'none',
-                                zIndex: 5,
-                            }}
-                            aria-hidden="true"
-                        >
-                            <line
-                                x1={touchPoint.x}
-                                y1={touchPoint.y}
-                                x2={mousePos.x}
-                                y2={mousePos.y + magnifierSize / 2}
-                                style={{
-                                    stroke: '#000',
-                                    strokeWidth: 1,
-                                    strokeDasharray: '5,5',
-                                    opacity: 0.7,
-                                }}
-                            />
-                            <circle
-                                cx={touchPoint.x}
-                                cy={touchPoint.y}
-                                r={10}
-                                style={{
-                                    fill: 'rgba(0,0,0,0.2)',
-                                    stroke: '#000',
-                                    strokeWidth: 1,
-                                }}
-                            />
-                        </svg>
-                    )}
-
-                    <div
-                        className="absolute bottom-2 left-2 right-2 flex justify-center gap-x-2 bg-white bg-opacity-70 p-1 rounded text-xs">
-                        <span>원본 이미지와 처리된 이미지를 비교하려면 마우스 또는 터치로 이미지를 탐색하세요</span>
-                    </div>
-                </>
+            className={cn(
+                "relative overflow-hidden select-none",
+                isFullscreen ? "fixed inset-0 z-50 bg-black flex items-center justify-center" : "",
+                className
             )}
+            style={!isFullscreen && typeof width === 'number' && typeof height === 'number' ? {
+                width,
+                height
+            } : {width: '100%', height: '100%'}}
+        >
+            <div
+                ref={containerRef}
+                className={cn(
+                    "relative w-full h-full",
+                    isFullscreen ? "max-w-[90vw] max-h-[90vh]" : ""
+                )}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                aria-label="이미지 비교 시각화 도구"
+                role="application"
+            >
+                {isLoading ? (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                        <p>이미지 로딩 중...</p>
+                    </div>
+                ) : (
+                    <>
+                        <Image
+                            src={resultUrl}
+                            alt="처리된 이미지"
+                            fill
+                            style={{objectFit: 'contain'}}
+                            aria-hidden={showMagnifier}
+                        />
+
+                        {processedDims && mousePos && (
+                            <div
+                                style={originalOverlayStyle}
+                                aria-hidden="true"
+                            >
+                                <Image
+                                    src={originUrl}
+                                    alt="원본 이미지"
+                                    fill
+                                    style={{objectFit: 'contain'}}
+                                />
+                            </div>
+                        )}
+
+                        {processedDims && mousePos && showMagnifier && magnifierEnabled && (
+                            <div style={magnifierContainerStyle} aria-label="확대 렌즈" role="img">
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        left: 0,
+                                        top: 0,
+                                        width: magnifierSize / 2,
+                                        height: magnifierSize,
+                                        backgroundImage: `url(${originUrl})`,
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundSize: `${bgSizeX}px ${bgSizeY}px`,
+                                        backgroundPosition: `${fullBgPosX}px ${bgPosY}px`,
+                                    }}
+                                    aria-hidden="true"
+                                />
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        left: magnifierSize / 2,
+                                        top: 0,
+                                        width: magnifierSize / 2,
+                                        height: magnifierSize,
+                                        backgroundImage: `url(${resultUrl})`,
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundSize: `${bgSizeX}px ${bgSizeY}px`,
+                                        backgroundPosition: `${fullBgPosX}px ${bgPosY}px`,
+                                    }}
+                                    aria-hidden="true"
+                                />
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: '50%',
+                                        width: 1,
+                                        height: '100%',
+                                        backgroundColor: 'rgba(255,255,255,0.5)',
+                                        zIndex: 1,
+                                    }}
+                                    aria-hidden="true"
+                                />
+                            </div>
+                        )}
+
+                        {/* 컨트롤 사이드바 */}
+                        <div className="absolute right-2 top-2 flex flex-col gap-2 z-20">
+                            <button
+                                onClick={toggleMagnifier}
+                                className={cn(
+                                    "p-2 rounded-full transition-colors flex items-center justify-center",
+                                    magnifierEnabled ? "bg-orange-500 text-white" : "bg-gray-700 bg-opacity-70 text-white"
+                                )}
+                                aria-label={magnifierEnabled ? "돋보기 비활성화" : "돋보기 활성화"}
+                            >
+                                <Search size={20}/>
+                            </button>
+                            <button
+                                onClick={toggleFullscreen}
+                                className="p-2 rounded-full bg-gray-700 bg-opacity-70 text-white hover:bg-opacity-100 transition-colors flex items-center justify-center"
+                                aria-label={isFullscreen ? "최소화" : "최대화"}
+                            >
+                                {isFullscreen ? <Minimize2 size={20}/> : <Maximize2 size={20}/>}
+                            </button>
+                        </div>
+                    </>
+                )}
+            </div>
         </div>
     );
 }
