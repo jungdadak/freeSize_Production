@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import CompareUpscale from "@/components/ComparePannel/Compare.upscale";
 import {notFound, useSearchParams} from "next/navigation";
-import UpscaleSummary from "@/app/testresult/upscale/UpscaleSummary";
+import UpscaleSummary from "@/app/testresult/ProcessSummary";
 import {useEffect, useState} from "react";
 import {getImageDimensions} from "@/utils/getImageDimensionFromBlob";
 import {useAppSelector} from "@/lib/redux/hooks";

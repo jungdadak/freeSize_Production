@@ -8,7 +8,7 @@ interface UpscaleSummaryProps {
     resultUrl: string
 }
 
-export default function UpscaleSummary({fileName, originDimension, resultDimension, resultUrl}: UpscaleSummaryProps) {
+export default function ProcessSummary({fileName, originDimension, resultDimension, resultUrl}: UpscaleSummaryProps) {
     return (<>
         <Card className="w-auto h-auto">
             <CardHeader>
