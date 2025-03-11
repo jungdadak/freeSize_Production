@@ -124,10 +124,10 @@ export default function QuickStartPage() {
                                 </div>
                                 <h4 className="font-medium mb-2">다운로드 형식</h4>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                                    <div className="border rounded p-2 text-center hover:bg-orange-50 cursor-pointer">PNG</div>
-                                    <div className="border rounded p-2 text-center hover:bg-orange-50 cursor-pointer">JPG(JPEG)</div>
-                                    <div className="border rounded p-2 text-center hover:bg-orange-50 cursor-pointer">WEBP</div>
-                                    <div className="border rounded p-2 text-center hover:bg-orange-50 cursor-pointer">ZIP</div>
+                                    <div className="border rounded p-2 text-center hover:bg-orange-500 cursor-pointer">PNG</div>
+                                    <div className="border rounded p-2 text-center hover:bg-orange-500 cursor-pointer">JPG(JPEG)</div>
+                                    <div className="border rounded p-2 text-center hover:bg-orange-500 cursor-pointer">WEBP</div>
+                                    <div className="border rounded p-2 text-center hover:bg-orange-500 cursor-pointer">ZIP</div>
                                 </div>
                             </div>
                         )}
@@ -155,9 +155,9 @@ export default function QuickStartPage() {
             <div className="mb-8">
                 <h2 className="text-xl font-bold mb-4">실제 사용해보기</h2>
                 <Card>
-                    <CardContent className="p-6 flex max-w-xl justify-center">
+                    <CardContent className="p-6 flex max-w-7xl justify-center">
 
-                            <InteractivePannel />
+                        <InteractivePannel disableCloseButton={true} />
 
                     </CardContent>
                 </Card>

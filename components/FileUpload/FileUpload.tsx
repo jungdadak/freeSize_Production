@@ -106,6 +106,7 @@ const FileUpload = () => {
             className={`
         relative w-3/4 aspect-square m-auto
         rounded-2xl
+        max-w-xl
         border-4 border-dashed
         transition-all duration-300 ease-in-out
         flex flex-col items-center justify-center gap-4

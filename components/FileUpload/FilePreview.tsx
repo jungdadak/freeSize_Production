@@ -29,7 +29,7 @@ const FilePreview = () => {
   const convertedFileSize = formatFileSize(file?.size);
 
   return (
-    <div className="flex justify-between w-full gap-2">
+      <div className="flex flex-col md:flex-row justify-between w-full gap-4">
       <div className="text-center bg-white dark:bg-black rounded-xl shadow-lg flex-1">
         <div className="relative inline-block">
           <p className="text-lg text-black dark:text-white mb-4 font-bold">

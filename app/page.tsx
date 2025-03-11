@@ -1,6 +1,5 @@
 import Scroll from '@/components/Btn/Scroll';
 import Hero from '@/components/HeroSection/Hero';
-import Image from 'next/image';
 import {Sparkles} from 'lucide-react';
 import ProcessSection from '@/components/HeroSection/ProcessSection';
 import TestPannel from '@/components/Pannel/InteractivePannel';

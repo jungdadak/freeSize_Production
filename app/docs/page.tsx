@@ -1,7 +1,6 @@
 // app/page.tsx
 import Image from 'next/image';
 import Link from 'next/link';
-import CompactPannel from "@/components/Pannel/CompactPannel";
 import {FeatureCard} from "@/components/FeatureCard/FeatureCard";
 
 export const metadata = {
@@ -14,7 +13,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-12">
             <section className="mb-16">
                 <div className="flex flex-col-reverse md:flex-row items-center md:items-start justify-between gap-8">
-                    <div className="w-full md:w-1/2 space-y-6">
+                    <div className="w-full  space-y-6">
                         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
                             LORA 모델 학습을 위한<br/>
                             <span className="text-blue-600 dark:text-blue-400">이미지 전처리 서비스</span>
@@ -25,22 +24,20 @@ export default function Home() {
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
-                                href="/docs/getting-started"
+                                href="/quickstart"
                                 className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
                             >
                                 시작하기
                             </Link>
                             <Link
-                                href="/docs"
+                                href="/docs/getting-started"
                                 className="px-6 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium rounded-lg transition-colors"
                             >
                                 문서 보기
                             </Link>
                         </div>
                     </div>
-                    <div className="w-full md:w-1/2">
-                        <CompactPannel />
-                    </div>
+
                 </div>
             </section>
 
@@ -172,7 +169,7 @@ export default function Home() {
                             </p>
                             <div className="flex justify-end">
                                 <Link
-                                    href="/features/upscale"
+                                    href="/docs/features/upscale"
                                     className="text-blue-600 dark:text-blue-400 hover:underline"
                                 >
                                     자세히 보기 →
@@ -201,7 +198,7 @@ export default function Home() {
                             </p>
                             <div className="flex justify-end">
                                 <Link
-                                    href="/features/uncrop"
+                                    href="/docs/features/uncrop"
                                     className="text-blue-600 dark:text-blue-400 hover:underline"
                                 >
                                     자세히 보기 →
