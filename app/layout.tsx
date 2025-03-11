@@ -9,6 +9,7 @@ import TanstackProviders from '@/utils/TanstackProviders';
 import {Toaster} from "sonner";
 
 import Image from "next/image";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -78,7 +79,10 @@ export default async function RootLayout({
 
           </TanstackProviders>
         </ReduxProvider>
-        </body>
-        </html>
-    );
+
+      <Footer/>
+      </body>
+    </html>
+  );
+
 }

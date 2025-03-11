@@ -17,7 +17,7 @@ export default function CompactPannel() {
     const file = useAppSelector((state) => state.file.file);
 
     return (
-        <div className="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+        <div className="w-full max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
             <div className="p-6">
                 {/* 헤더 영역 */}
                 <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
