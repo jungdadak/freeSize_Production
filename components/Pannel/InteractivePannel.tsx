@@ -1,4 +1,3 @@
-// components/Pannel/InteractivePannel.tsx
 'use client';
 
 import {useEffect, useState} from 'react';
