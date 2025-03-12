@@ -205,14 +205,15 @@ export default function ImageResultPage({
                                     </Tooltip>
                                 </div>
 
-                                <CardContent className="p-0 bg-neutral-800" style={{height: '50vh'}}>
-                                    <div className="w-full h-full relative overflow-hidden">
+                                <CardContent className="p-0 bg-neutral-800">
+                                    <div className="flex justify-center items-center overflow-auto"
+                                         style={{minHeight: '50vh'}}>
                                         <CompareComponent
                                             originUrl={originUrl}
                                             resultUrl={resultUrl}
                                             viewMode={viewMode}
                                             zoomLevel={zoomLevel}
-                                            className="h-full w-full"
+                                            className="w-full"
                                         />
                                     </div>
                                 </CardContent>

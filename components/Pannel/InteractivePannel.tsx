@@ -1,4 +1,3 @@
-// components/Pannel/InteractivePannel.tsx
 'use client';
 
 import {useEffect, useState} from 'react';
@@ -12,7 +11,7 @@ import {useTestRedirectOnSuccess} from "@/hooks/useTestRedirectionOnSuccess";
  * 메인페이지 우측에 조건부로 랜더링 되는 테스트 패널 컴포넌트 입니다.
  * components/Btn/FileUpload 의 FilePreview, FileUpload를 조건부로 랜더링 합니다.
  */
-export default function TestPannel() {
+export default function TestPannel({ disableCloseButton = false }) {
     const router = useRouter();
     const [isVisible, setIsVisible] = useState(false);
     useTestRedirectOnSuccess();
@@ -51,18 +50,18 @@ export default function TestPannel() {
             {/* 전체 컨테이너에 여백 추가 */}
             <div className="p-8 md:p-10 h-full flex flex-col">
                 {/* 닫기 버튼 */}
-                <button
+                {!disableCloseButton && <button
                     onClick={handleClose}
                     className="absolute top-6 right-6
-            w-10 h-10 flex items-center justify-center 
+            w-10 h-10 flex items-center justify-center
             rounded-full bg-orange-100 dark:bg-orange-900/30
-            text-orange-600 dark:text-orange-400 
-            hover:bg-orange-200 dark:hover:bg-orange-800/40 
+            text-orange-600 dark:text-orange-400
+            hover:bg-orange-200 dark:hover:bg-orange-800/40
             transition-colors duration-200
             border-2 border-orange-200 dark:border-orange-800/50"
                 >
                     <span className="text-2xl font-medium">×</span>
-                </button>
+                </button>}
 
                 {/* 헤더 영역 */}
                 <div className=" border-b-2 border-orange-200 dark:border-orange-800/50 ">

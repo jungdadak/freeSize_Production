@@ -1,5 +1,5 @@
 'use client'
-import {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Image from 'next/image';
 import {getImageDimensions} from "@/utils/getImageDimensionFromBlob";
 
@@ -39,6 +39,7 @@ const CompareUncrop = ({
     });
 
     const [hasError, setHasError] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     // 확장 방향 및 비율 계산
     const calculateScalingInfo = () => {
@@ -46,7 +47,6 @@ const CompareUncrop = ({
         const originHeight = dimensions.origin.naturalHeight;
         const resultWidth = dimensions.result.naturalWidth;
         const resultHeight = dimensions.result.naturalHeight;
-
 
         // 원본 대비 확장 비율
         const widthRatio = resultWidth / originWidth;
@@ -114,10 +114,8 @@ const CompareUncrop = ({
     // 로딩 중 표시
     if (isLoading) {
         return (
-            <div className={`${className} w-full h-full`}>
-                <div className="w-full h-full bg-neutral-800 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-                </div>
+            <div className={`${className} w-full flex items-center justify-center`} style={{height: '50vh'}}>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
             </div>
         );
     }
@@ -125,16 +123,14 @@ const CompareUncrop = ({
     // 오류 발생 시 표시
     if (hasError) {
         return (
-            <div className={`${className} w-full h-full`}>
-                <div className="w-full h-full bg-neutral-800 flex flex-col items-center justify-center">
-                    <p className="text-white mb-2">이미지를 불러올 수 없습니다.</p>
-                    <button
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                        onClick={() => window.location.reload()}
-                    >
-                        다시 시도
-                    </button>
-                </div>
+            <div className={`${className} w-full flex flex-col items-center justify-center`} style={{height: '50vh'}}>
+                <p className="text-white mb-2">이미지를 불러올 수 없습니다.</p>
+                <button
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    onClick={() => window.location.reload()}
+                >
+                    다시 시도
+                </button>
             </div>
         );
     }
@@ -155,7 +151,7 @@ const CompareUncrop = ({
         };
 
         return (
-            <div className="relative w-full h-full bg-neutral-800 flex items-center justify-center">
+            <div className="flex items-center justify-center">
                 {/* 결과 이미지 */}
                 <div style={{
                     width: `${resultSize.width}px`,
@@ -193,11 +189,17 @@ const CompareUncrop = ({
     };
 
     // 원본만 보기 모드
-    const renderOriginalMode = () => (
-        <div className="w-full h-full bg-neutral-800 flex items-center justify-center">
+    const renderOriginalMode = () => {
+        // 줌 레벨이 적용된 원본 이미지 크기
+        const originalSize = {
+            width: dimensions.origin.naturalWidth * (zoomLevel / 100),
+            height: dimensions.origin.naturalHeight * (zoomLevel / 100)
+        };
+
+        return (
             <div style={{
-                width: `${dimensions.origin.naturalWidth * (zoomLevel / 100)}px`,
-                height: `${dimensions.origin.naturalHeight * (zoomLevel / 100)}px`,
+                width: `${originalSize.width}px`,
+                height: `${originalSize.height}px`,
                 position: 'relative'
             }}>
                 <Image
@@ -208,15 +210,21 @@ const CompareUncrop = ({
                     style={{objectFit: 'contain'}}
                 />
             </div>
-        </div>
-    );
+        );
+    };
 
     // 결과만 보기 모드
-    const renderResultMode = () => (
-        <div className="w-full h-full bg-neutral-800 flex items-center justify-center">
+    const renderResultMode = () => {
+        // 줌 레벨이 적용된 결과 이미지 크기
+        const resultSize = {
+            width: dimensions.result.naturalWidth * (zoomLevel / 100),
+            height: dimensions.result.naturalHeight * (zoomLevel / 100)
+        };
+
+        return (
             <div style={{
-                width: `${dimensions.result.naturalWidth * (zoomLevel / 100)}px`,
-                height: `${dimensions.result.naturalHeight * (zoomLevel / 100)}px`,
+                width: `${resultSize.width}px`,
+                height: `${resultSize.height}px`,
                 position: 'relative'
             }}>
                 <Image
@@ -227,8 +235,8 @@ const CompareUncrop = ({
                     style={{objectFit: 'contain'}}
                 />
             </div>
-        </div>
-    );
+        );
+    };
 
     // 현재 뷰 모드에 따라 적절한 렌더링 함수 호출
     let content;
@@ -246,7 +254,7 @@ const CompareUncrop = ({
     }
 
     return (
-        <div className={`${className} w-full h-full overflow-hidden`} data-testid="compare-uncrop-container">
+        <div ref={containerRef} className={`${className} flex justify-center`} data-testid="compare-uncrop-container">
             {content}
         </div>
     );
