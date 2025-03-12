@@ -20,8 +20,8 @@ const navItems = [
     icon: <RocketIcon className="w-5 h-5" />,
   },
   {
-    href: '/imageBox',
-    label: 'Image Box',
+    href: 'https://freesize.vercel.app/',
+    label: 'Prev Version',
     icon: <PackageOpen className="w-5 h-5" />,
   },
   {
@@ -60,22 +60,47 @@ export default function Navbar({ className = '' }: NavbarProps) {
 
         {/* 네브바 가운데 요소 섹션 */}
         <section className="flex items-center mx-auto">
+          {/* 데스크톱 네비게이션 */}
           <nav className="hidden lg:flex items-center gap-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="
-                  flex items-center gap-3 px-3 py-2 rounded-2xl
-                  text-slate-200
-                  hover:bg-orange-600/70
-                  transition-colors duration-100
-                "
-              >
-                {item.icon}
-                <span className="font-bold text-md">{item.label}</span>
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              // 외부 링크 확인
+              if (item.href.startsWith('http')) {
+                return (
+                    <a
+                        key={item.href}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="
+            flex items-center gap-3 px-3 py-2 rounded-2xl
+            text-slate-200
+            hover:bg-orange-600/70
+            transition-colors duration-100
+          "
+                    >
+                      {item.icon}
+                      <span className="font-bold text-md">{item.label}</span>
+                    </a>
+                );
+              }
+
+              // 내부 링크는 Next/Link 사용
+              return (
+                  <Link
+                      key={item.href}
+                      href={item.href}
+                      className="
+          flex items-center gap-3 px-3 py-2 rounded-2xl
+          text-slate-200
+          hover:bg-orange-600/70
+          transition-colors duration-100
+        "
+                  >
+                    {item.icon}
+                    <span className="font-bold text-md">{item.label}</span>
+                  </Link>
+              );
+            })}
           </nav>
         </section>
 
@@ -110,23 +135,49 @@ export default function Navbar({ className = '' }: NavbarProps) {
         ${isOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}
       `}
       >
+        {/* 모바일 네비게이션 */}
         <nav className="flex flex-col p-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setIsOpen(false)}
-              className="
-                flex items-center gap-3 px-4 py-3 rounded-xl
-                text-slate-200
-                hover:bg-orange-300/50
-                transition-colors duration-100
-              "
-            >
-              {item.icon}
-              <span className="font-bold text-md">{item.label}</span>
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            // 외부 링크 확인
+            if (item.href.startsWith('http')) {
+              return (
+                  <a
+                      key={item.href}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsOpen(false)}
+                      className="
+            flex items-center gap-3 px-4 py-3 rounded-xl
+            text-slate-200
+            hover:bg-orange-300/50
+            transition-colors duration-100
+          "
+                  >
+                    {item.icon}
+                    <span className="font-bold text-md">{item.label}</span>
+                  </a>
+              );
+            }
+
+            // 내부 링크는 Next/Link 사용
+            return (
+                <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className="
+          flex items-center gap-3 px-4 py-3 rounded-xl
+          text-slate-200
+          hover:bg-orange-300/50
+          transition-colors duration-100
+        "
+                >
+                  {item.icon}
+                  <span className="font-bold text-md">{item.label}</span>
+                </Link>
+            );
+          })}
           {/* 다크모드 토글러 (모바일) */}
           <div className="mt-4 px-4 py-3 border-t border-orange-300">
             <DarkModeToggler />

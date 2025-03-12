@@ -1,6 +1,5 @@
 import Scroll from '@/components/Btn/Scroll';
 import Hero from '@/components/HeroSection/Hero';
-import Image from 'next/image';
 import {Sparkles} from 'lucide-react';
 import ProcessSection from '@/components/HeroSection/ProcessSection';
 import TestPannel from '@/components/Pannel/InteractivePannel';
@@ -16,16 +15,6 @@ export default async function HomePage({searchParams}: PageProps) {
 
     return (
         <div className="min-h-screen text-center relative">
-            {/* 배경 이미지 – 기존 디자인 그대로 */}
-            <Image
-                src="/bgcat.webp"
-                alt="Background Cat"
-                priority
-                className="fixed top-0 left-0 w-full h-screen object-cover -z-10"
-                width={2560}
-                height={1440}
-                sizes="100vw"
-            />
 
             {/* Hero 섹션 */}
             <Hero alignment="start">
