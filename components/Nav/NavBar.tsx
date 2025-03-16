@@ -1,6 +1,6 @@
 'use client';
 
-import {Activity, BarChart, BookOpen, Menu, PackageOpen, RocketIcon, User, X,} from 'lucide-react';
+import {BarChart, BookOpen, Menu, PackageOpen, RocketIcon, X,} from 'lucide-react';
 import Link from 'next/link';
 import DarkModeToggler from './DarkModeToggler';
 import Logo from './Logo';
@@ -25,16 +25,16 @@ const getNavItems = (isAdmin: boolean) => [
         label: 'Docs',
         icon: <BookOpen className="w-5 h-5"/>,
     },
-    {
-        href: '/status',
-        label: 'Status',
-        icon: <Activity className="w-5 h-5"/>,
-    },
-    {
-        href: '/profile',
-        label: 'Profile',
-        icon: <User className="w-5 h-5"/>,
-    },
+    // {
+    //     href: '/status',
+    //     label: 'Status',
+    //     icon: <Activity className="w-5 h-5"/>,
+    // },
+    // {
+    //     href: '/profile',
+    //     label: 'Profile',
+    //     icon: <User className="w-5 h-5"/>,
+    // },
     ...(isAdmin
         ? [
             {
