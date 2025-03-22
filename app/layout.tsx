@@ -6,6 +6,7 @@ import {cookies} from 'next/headers';
 import ReduxProvider from '@/lib/redux/ReduxProvider';
 import TanstackProviders from '@/utils/TanstackProviders';
 import ToastContainer from '@/components/Toast/ToastContainer';
+import { Analytics } from "@vercel/analytics/react"
 
 import {Toaster} from "sonner";
 
@@ -82,7 +83,8 @@ export default async function RootLayout({
                             height={1440}
                             sizes="100vw"
                         />
-                        {children}</main>
+                        {children}        <Analytics />
+                    </main>
                     <Toaster theme={isDarkMode ? 'dark' : 'light'}/>
                     <ToastContainer/>
 
